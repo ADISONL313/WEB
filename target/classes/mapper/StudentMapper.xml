@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqcskj.studentsadminvisul.mapper.StudentMapper">
+    <sql id="tableColumn">
+        studentName,password,id_card,mobile,gender,counselor,college,major,province
+    </sql>
+    <resultMap id="studentsResultMap" type="Student">
+    </resultMap>
+    <insert id="insertStudents">
+        insert IGNORE into students (studentName,college,major,id_card,mobile,password,gender,counselor) values <foreach collection="list" item="student" separator=",">
+        (#{student.studentName},#{student.college},#{student.major},#{student.id_card},#{student.mobile},MD5(SUBSTRING(#{student.id_card},-6)),#{student.gender},#{student.counselor})
+    </foreach>
+    </insert>
+    <select id="getStudentsTableData" resultMap="studentsResultMap">
+        SELECT major.majorName,students.id_card,students.counselor as teacherId,students.mobile,students.gender,students.college,students.major,students.student_id,students.studentName,students.province,teachers.teacherName AS counselor FROM students
+        JOIN teachers ON students.counselor = teachers.teacher_id JOIN  major ON students.major = major.id <where><if test="counselor!='' and counselor!=null and counselor!='admin'">and students.counselor=#{counselor}</if>
+        <if test="studentName!='' and studentName!=null">and studentName like CONCAT("%",#{studentName},"%")</if><if test="major!='' and major!=null">and major like CONCAT("%",#{major},"%") </if>
+        <if test="province!='' and province!=null">and province  like CONCAT("%",#{province},"%")</if>
+        <if test="student_id!='' and student_id!=null">and student_id=#{student_id}</if>
+        <if test="majorName!='' and majorName!=null">majorName like CONCAT("%",#{majorName},"%")</if>
+    </where>
+    </select>
+    <update id="updateStudentInfo">
+        update students
+        <set>
+            <if test="studentName != '' and studentName != null">
+                studentName = #{studentName},
+            </if>
+            <if test="gender != '' and gender != null">
+                gender = #{gender},
+            </if>
+            <if test="id_card != '' and id_card != null">
+                id_card = #{id_card},
+            </if>
+            <if test="mobile != '' and mobile != null">
+                mobile = #{mobile},
+            </if>
+            <if test="majorName != '' and majorName != null">
+                major =(select id from major where majorName=#{majorName}),
+            </if>
+            <if test="province != '' and province != null">
+                province = #{province},
+            </if>
+            <if test="password!='' and password!=null">
+                password=#{password},
+            </if>
+        </set>
+        where student_id = #{student_id}
+    </update>
+</mapper>

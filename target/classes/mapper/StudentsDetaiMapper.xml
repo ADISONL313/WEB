@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqcskj.studentsadminvisul.mapper.StudentsDetailMapper">
+    <resultMap id="studentDetailResultMap" type="StudentsDetail">
+    </resultMap>
+    <select id="getStudentDetail" resultMap="studentDetailResultMap">
+        SELECT
+            studentsDetail.id,
+            studentsDetail.level,
+            studentsDetail.moral,
+            studentsDetail.course,
+            studentsDetail.attendance,
+            studentsDetail.practice,
+            studentsDetail.ideology,
+            studentsDetail.evaluate,
+            studentsDetail.class_id,
+            studentsDetail.homeAddress,
+            studentsDetail.birthday,
+            studentsDetail.roomId,
+            classes.className,
+            dormitories.room_id,
+            dormitories.buildingName
+        FROM
+            studentsDetail
+                JOIN
+            classes ON studentsDetail.class_id = classes.id
+                JOIN
+            dormitories ON studentsDetail.roomId = dormitories.id where studentsDetail.student_id=#{student_id}
+    </select>
+    <insert id="addStudentDetail">
+        insert into studentsDetail (level,moral,course,attendance,practice,ideology,
+        <if test="evaluate!='' and evaluate!=null">evaluate,</if>class_id,<if test="homeAddress!='' and homeAddress!=null">
+        homeAddress,
+    </if><if test="birthday!='' and birthday!=null">birthday,</if>roomId,student_id
+        ) values(#{level},0,0,0,0,0,
+                 <if test="evaluate!='' and evaluate!=null">#{evaluate},</if>#{class_id},<if test="homeAddress!='' and homeAddress!=null">
+        #{homeAddress},
+    </if><if test="birthday!='' and birthday!=null">#{birthday},</if>#{roomId},#{student_id}
+        )
+    </insert>
+    <update id="updateStudentDetail">
+        UPDATE studentsDetail
+            <set><if test="level != null and level != ''">
+                level = #{level},
+            </if>
+                <if test="moral != null and moral!=''">
+                    moral = #{moral},
+                </if>
+                <if test="course != null and course != ''">
+                    course = #{course},
+                </if>
+                <if test="attendance != null and attendance!=''">
+                    attendance = #{attendance},
+                </if>
+                <if test="practice != null and practice != ''">
+                    practice = #{practice},
+                </if>
+                <if test="ideology != null and ideology != ''">
+                    ideology = #{ideology},
+                </if>
+                <if test="evaluate != null and evaluate != ''">
+                    evaluate = #{evaluate},
+                </if>
+                <if test="class_id != null and class_id!=''">
+                    class_id = #{class_id},
+                </if>
+                <if test="homeAddress != null and homeAddress != ''">
+                    homeAddress = #{homeAddress},
+                </if>
+                <if test="birthday != null and birthday!=''">
+                    birthday = #{birthday},
+                </if>
+                <if test="roomId != null and roomId != ''">
+                    roomId = #{roomId},
+                </if>
+            </set>
+        WHERE student_id = #{student_id}
+    </update>
+
+    <select id="getRoomAndTeacher" resultMap="studentDetailResultMap">
+        SELECT
+            studentsDetail.roomId,
+            dormitories.room_id,
+            dormitories.buildingName,
+            studentsDetail.student_id,
+            students.counselor as teacher_id
+        FROM
+            studentsDetail
+                JOIN
+            dormitories ON studentsDetail.roomId = dormitories.id join students on students.student_id=studentsDetail.student_id where studentsDetail.student_id=#{student_id}
+    </select>
+</mapper>

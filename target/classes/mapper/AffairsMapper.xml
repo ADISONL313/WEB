@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqcskj.studentsadminvisul.mapper.AffairsMapper">
+
+    <resultMap id="affairsResultMap" type="Affairs">
+    </resultMap>
+    <update id="updateApplyState">
+        update affairs
+        <set>
+            <if test="refuseReason!='' and refuseReason!=null">
+                refuseReason=#{refuseReason},
+            </if>
+<if test="audits!='' and audits!=null">
+    audits=#{audits},
+</if>
+        </set>
+where id=#{id}
+    </update>
+    <select id="selectAllAffairs" resultMap="affairsResultMap">
+        select studentsDetail.level as grade,classes.className,students.studentName,affairs.id,affairs.student_id,affairs.teacher_id,affairs.content,affairs.affairsType,affairs.audits,
+               affairs.reason,affairs.sourceRoomOrMajor,affairs.refuseReason,affairs.majorOrRoomId from affairs
+                   join students on affairs.student_id=students.student_id
+                   join studentsDetail on affairs.student_id=studentsDetail.student_id
+                                              join classes on studentsDetail.class_id=classes.id
+        <where>
+            <if test="studentName!='' and studentName!=null">
+                and students.studentName like CONCAT("%",#{studentName},"%")
+            </if>
+            <if test="affairsType!='' and affairsType!=null and affairsType!=0">
+                and affairs.affairsType=#{affairsType}
+            </if>
+        <if test="id!='' and id!=null">
+            and affairs.id=#{id}
+        </if>
+<if test="student_id!='' and student_id!=null">
+    and affairs.student_id=#{student_id}
+</if>
+        </where>
+    </select>
+</mapper>
