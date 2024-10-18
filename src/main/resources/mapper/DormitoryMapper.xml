@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqcskj.studentsadminvisul.mapper.DormitoryMapper">
+    <resultMap id="dormitoryResultMap" type="Dormitory">
+    </resultMap>
+    <select id="getDormitories" resultMap="dormitoryResultMap">
+        select * from dormitories <where>
+        <if test="buildingName!='' and buildingName!=null">and buildingName like CONCAT("%",#{buildingName},"%")</if>
+        <if test="room_id!='' and room_id!=null">and room_id like CONCAT(#{room_id},"%")</if>
+        <if test="gender!=null and gender!=''">and gender=#{gender}</if>
+    </where>
+        order by buildingName,room_id
+    </select>
+</mapper>

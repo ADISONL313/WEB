@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqcskj.studentsadminvisul.mapper.TeacherMapper">
+<sql id="tableColumn">
+teacher_id,teacherName,password,college,mobile,idCard,remarks,gender
+</sql>
+    <resultMap id="teachersResultMap" type="Teacher">
+    </resultMap>
+<insert id="insertOneTeacher">
+    insert into teachers
+    (teacher_id,password,teacherName,idCard,gender
+     <if test="mobile!=''">
+        ,mobile
+     </if>
+    <if test="college!=''">,college
+    </if>
+    <if test="remarks!=''">
+        ,remarks
+    </if>)
+    value(#{teacher_id},#{password},#{teacherName},#{idCard},#{gender}
+    <if test="mobile!=''">
+        ,#{mobile}
+    </if>
+    <if test="college!=''">
+        ,#{college}
+    </if>
+    <if test="remarks!=''">
+        ,#{remarks}
+    </if>
+            )
+</insert>
+    <select id="getAllTeachers" resultMap="teachersResultMap">
+        select * from teachers
+        <where>
+            <if test="college != '' and college != null">
+                and college = #{college}
+            </if>
+        <if test="idCard!='' and idCard!=null">
+            and idCard=#{idCard}
+        </if>
+        <if test="teacher_id!='' and teacher_id!=null">
+            and teacher_id=#{teacher_id}
+        </if>
+        </where>
+    </select>
+    <update id="updateTeacherInfo">
+update teachers
+        <set>
+            <if test="teacherName!='' and teacherName!=null">teacherName=#{teacherName},</if>
+<if test="gender!='' and gender!=null">gender=#{gender},</if>
+<if test="idCard!='' and idCard!=null">idCard=#{idCard},</if>
+<if test="mobile!='' and mobile!=null">mobile=#{mobile},</if>
+            <if test="password!='' and password!=null">
+                password=#{password},
+            </if>
+        </set>
+        where teacher_id=#{teacher_id}
+    </update>
+</mapper>

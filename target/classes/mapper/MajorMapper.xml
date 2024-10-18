@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqcskj.studentsadminvisul.mapper.MajorMapper">
+    <sql id="tableColumn">
+        majorName,college
+    </sql>
+    <resultMap id="majorResultMap" type="Major">
+        <id column="id" property="id"/>
+        <result column="college" property="college"/>
+        <result column="majorName" property="majorName"/>
+    </resultMap>
+    <select id="majorVerify" resultType="String">
+        select majorName from major<if test="majorName!=''"> where majorName=#{majorName}</if>
+    </select>
+    <select id="selectMajorByNameAdnCollege" resultMap="majorResultMap">
+        select * from major <where><if test="college!=''">and college like CONCAT("%",#{college},"%")</if>
+        <if test="majorName!=''">and majorName like CONCAT("%",#{majorName},"%")</if></where>order by college
+    </select>
+</mapper>
